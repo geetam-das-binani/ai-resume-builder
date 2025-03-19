@@ -7,23 +7,27 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { personalInfoSchema, PersonalInfoValues } from "@/lib/validation";
+import { EditorFormProps } from "@/lib/types";
+import {
+  personalInfoSchema,
+  PersonalInfoValues,
+  ResumeValues,
+} from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-const PersonalInfoForm = () => {
+const PersonalInfoForm = ({ resumeData, setResumeData }: EditorFormProps) => {
   const form = useForm<PersonalInfoValues>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: {
-      photo: undefined,
-      firstName: "",
-      lastName: "",
-      city: "",
-      country: "",
-      phone: "",
-      jobTitle: "",
-      email: "",
+      firstName: resumeData?.firstName ?? "",
+      lastName: resumeData?.lastName ?? "",
+      city: resumeData?.city ?? "",
+      country: resumeData?.country ?? "",
+      phone: resumeData?.phone ?? "",
+      jobTitle: resumeData?.jobTitle ?? "",
+      email: resumeData?.email ?? "",
     },
   });
   useEffect(() => {
@@ -31,9 +35,10 @@ const PersonalInfoForm = () => {
       const isValid = await form.trigger();
       if (!isValid) return;
       // update resume data
+      setResumeData({ ...resumeData, ...values });
     });
     return () => unsubscribe();
-  }, [form]);
+  }, [form, resumeData, setResumeData]);
   return (
     <div className="max-w-xl mx-auto space-y-6">
       <div className="text-center space-y-1.5">

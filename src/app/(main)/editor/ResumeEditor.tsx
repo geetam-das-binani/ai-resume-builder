@@ -6,12 +6,14 @@ import { useSearchParams } from "next/navigation";
 import { steps } from "./steps";
 import BreadCrumbs from "./BreadCrumbs";
 import Footer from "./Footer";
+import { ResumeValues } from "@/lib/validation";
 
 const ResumeEditor = () => {
   const searchParams = useSearchParams();
   const currentStep = searchParams.get("step") || steps[0].key;
 
-  const [resumeData, setResumeData] = useState();
+  const [resumeData, setResumeData] = useState<ResumeValues>();
+  console.log(resumeData)
   function setStep(key: string) {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("step", key);
@@ -33,10 +35,17 @@ const ResumeEditor = () => {
         <div className="absolute bottom-0 top-0 flex w-full">
           <div className="w-full md:w-1/2 p-3 overflow-y-auto space-y-6">
             <BreadCrumbs currentStep={currentStep} setCurrentStep={setStep} />
-            {FormComponent && <FormComponent />}
+            {FormComponent && (
+              <FormComponent
+                resumeData={resumeData as ResumeValues}
+                setResumeData={setResumeData}
+              />
+            )}
           </div>
           <div className="grow md:border-r" />
-          <div className="hidden w-1/2 md:flex">right</div>
+          <div className="hidden w-1/2 md:flex">
+          <pre>{JSON.stringify(resumeData,null,2 )}</pre>
+          </div>
         </div>
       </main>
       <Footer currentStep={currentStep} setCurrentStep={setStep} />
