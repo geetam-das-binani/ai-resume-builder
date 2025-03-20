@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { FormField } from "@/components/ui/form";
 import { EditorFormProps } from "@/lib/types";
 import { workExperienceSchema, WorkExperienceValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import React, { useEffect } from "react";
-import { Form, useFieldArray, useForm } from "react-hook-form";
+import {  useFieldArray, useForm } from "react-hook-form";
+import WorkExperienceItem from "../WorkExperienceItem";
+import { Form } from "@/components/ui/form";
 
 const WorkExperienceForm = ({ resumeData, setResumeData }: EditorFormProps) => {
   const form = useForm<WorkExperienceValues>({
@@ -28,7 +30,7 @@ const WorkExperienceForm = ({ resumeData, setResumeData }: EditorFormProps) => {
     return () => unsubscribe();
   }, [form, resumeData, setResumeData]);
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "workExperiences",
   });
@@ -42,8 +44,13 @@ const WorkExperienceForm = ({ resumeData, setResumeData }: EditorFormProps) => {
       </div>
       <Form {...form}>
         <form className="space-y-3">
-          {fields?.map((field) => (
-            <WorkExperienceItem key={field.id} />
+          {fields?.map((field, index) => (
+            <WorkExperienceItem
+              key={field.id}
+              index={index}
+              form={form}
+              remove={remove}
+            />
           ))}
           <div className="flex justify-center">
             <Button
@@ -57,7 +64,9 @@ const WorkExperienceForm = ({ resumeData, setResumeData }: EditorFormProps) => {
                   position: "",
                 })
               }
-            ></Button>
+            >
+              Add Work Experience
+            </Button>
           </div>
         </form>
       </Form>
@@ -66,7 +75,3 @@ const WorkExperienceForm = ({ resumeData, setResumeData }: EditorFormProps) => {
 };
 
 export default WorkExperienceForm;
-
-function WorkExperienceItem() {
-  return <div>work</div>;
-}
