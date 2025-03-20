@@ -3,6 +3,9 @@ import GenerateInfoForm from "./forms/GenerateInfoForm";
 import PersonalInfoForm from "./forms/PersonalInfoForm";
 import { EditorFormProps } from "@/lib/types";
 import WorkExperienceForm from "./forms/WorkExperienceForm";
+import EducationForm from "./forms/EducationForm";
+import SkillsForm from "./forms/SkillsForm";
+import SummaryForm from "./forms/SummaryForm";
 
 export const steps: Array<{
   title: string;
@@ -24,4 +27,19 @@ export const steps: Array<{
     component: WorkExperienceForm,
     key: "work-experience",
   },
+  {
+    title: "Education",
+    component: EducationForm,
+    key: "education",
+  },
+  {
+    title: "Skills",
+    component: SkillsForm,
+    key: "skills",
+  },
+  {
+    title:"Summary",
+    component:SummaryForm,
+    key:"summary"
+  }
 ];

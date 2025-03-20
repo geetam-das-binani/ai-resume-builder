@@ -18,7 +18,7 @@ const BreadCrumbs = ({ currentStep, setCurrentStep }: BreadCrumbsProps) => {
     <div className="flex justify-center">
       <Breadcrumb>
         <BreadcrumbList>
-          {steps.map((step, index) => {
+          {steps.map((step) => {
             return (
               <React.Fragment key={step.key}>
                 <BreadcrumbItem>
