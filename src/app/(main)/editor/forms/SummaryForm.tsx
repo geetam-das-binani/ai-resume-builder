@@ -17,7 +17,7 @@ const SummaryForm = ({ resumeData, setResumeData }: EditorFormProps) => {
   const form = useForm<SummaryValues>({
     resolver: zodResolver(summarySchema),
     defaultValues: {
-      summary: resumeData.summary ?? "",
+      summary: resumeData?.summary ?? "",
     },
   });
 
@@ -48,7 +48,7 @@ const SummaryForm = ({ resumeData, setResumeData }: EditorFormProps) => {
             name="summary"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Profession Summary</FormLabel>
+                <FormLabel className="sr-only">Profession Summary</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
