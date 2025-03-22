@@ -83,6 +83,25 @@ const WorkExperienceItem = ({
                 <Input
                   {...field}
                   type="date"
+                  min={
+                    form.getValues(`workExperiences.${index}.startDate`)
+                      ? new Date(
+                          new Date(
+                            form.getValues(
+                              `workExperiences.${index}.startDate`
+                            ) as unknown as Date
+                          ).setDate(
+                            new Date(
+                              form.getValues(
+                                `workExperiences.${index}.startDate`
+                              ) as unknown as Date
+                            ).getDate() + 1
+                          )
+                        )
+                          .toISOString()
+                          .split("T")[0]
+                      : undefined
+                  }
                   value={field.value?.slice(0, 10)}
                 />
               </FormControl>
@@ -92,8 +111,8 @@ const WorkExperienceItem = ({
         />
       </div>
       <FormDescription>
-        Leave <span className="font-semibold">end date </span> empty if you are  still
-        working
+        Leave <span className="font-semibold">end date </span> empty if you are
+        still working
       </FormDescription>
       <FormField
         control={form.control}
