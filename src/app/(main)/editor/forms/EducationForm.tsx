@@ -6,7 +6,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import EducationItem from "../EducationItem";
-
+import {
+  closestCorners,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 const EducationForm = ({ resumeData, setResumeData }: EditorFormProps) => {
   const form = useForm<EducationValues>({
     resolver: zodResolver(educationSchema),
@@ -22,17 +37,31 @@ const EducationForm = ({ resumeData, setResumeData }: EditorFormProps) => {
       // update resume data
       setResumeData({
         ...resumeData,
-        educations:
-          values.educations?.filter((edu) => edu !== undefined) || [],
+        educations: values.educations?.filter((edu) => edu !== undefined) || [],
       });
     });
     return () => unsubscribe();
   }, [form, resumeData, setResumeData]);
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control: form.control,
     name: "educations",
   });
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = fields.findIndex((field) => field.id === active.id);
+      const newIndex = fields.findIndex((field) => field.id === over.id);
+      move(oldIndex, newIndex);
+      return arrayMove(fields, oldIndex, newIndex);
+    }
+  }
   return (
     <div className="max-w-xl mx-auto space-y-6">
       <div className="space-y-1.5 text-center">
@@ -43,9 +72,28 @@ const EducationForm = ({ resumeData, setResumeData }: EditorFormProps) => {
       </div>
       <Form {...form}>
         <form className="space-y-3">
-          {fields?.map((field, index) => (
-            <EducationItem key={field.id} form={form} index={index} remove={remove} />
-          ))}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCorners}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToVerticalAxis]}
+          >
+            {" "}
+            <SortableContext
+              items={fields}
+              strategy={verticalListSortingStrategy}
+            >
+              {fields?.map((field, index) => (
+                <EducationItem
+                  key={field.id}
+                  form={form}
+                  index={index}
+                  remove={remove}
+                  id={field.id}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
           <div className="flex justify-center">
             <Button
               type="button"

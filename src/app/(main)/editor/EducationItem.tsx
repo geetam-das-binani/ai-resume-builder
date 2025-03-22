@@ -10,20 +10,45 @@ import {
 } from "@/components/ui/form";
 import { GripHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
-
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 interface EducationItemProps {
+  id: string;
   form: UseFormReturn<EducationValues>;
   index: number;
   remove: (index: number) => void;
 }
 
-const EducationItem = ({ form, index, remove }: EducationItemProps) => {
+const EducationItem = ({ form, index, remove, id }: EducationItemProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
   return (
-    <div className="space-y-3 border rouded-md bg-background p-3">
+    <div
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+      }}
+      ref={setNodeRef}
+      className={cn(
+        "space-y-3 border rouded-md bg-background p-3",
+        isDragging && "shadow-xl z-50 cursor-grab relative"
+      )}
+    >
       <div className="flex justify-between gap-2">
         <span className="font-semibold">Education {index + 1}</span>
-        <GripHorizontal className="size-5 cursor-grab text-muted-foreground" />
+        <GripHorizontal
+          className="size-5 cursor-grab text-muted-foreground"
+          {...attributes}
+          {...listeners}
+        />
       </div>
       <FormField
         control={form.control}
