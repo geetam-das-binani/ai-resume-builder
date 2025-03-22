@@ -6,6 +6,7 @@ import { ResumeValues } from "@/lib/validation";
 import Image from "next/image";
 import { formatDate } from "date-fns";
 import { Badge } from "./ui/badge";
+import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 
 interface ResumePreviewProps extends Omit<EditorFormProps, "setResumeData"> {
   className?: string;
@@ -71,6 +72,14 @@ function PersonalnfoHeader({ resumeData = {} }: ResumeSectionProps) {
           alt="profile photo"
           width={100}
           height={100}
+          style={{
+            borderRadius:
+              borderStyle === BorderStyles.SQUARE
+                ? "0px"
+                : borderStyle === BorderStyles.CIRCLE
+                ? "9999px"
+                : "10%",
+          }}
         />
       )}
       <div className="space-y-2.5">
@@ -200,7 +209,7 @@ function EducationSection({ resumeData = {} }: ResumeSectionProps) {
 }
 
 function SkillsSection({ resumeData = {} }: ResumeSectionProps) {
-  const { skills, colorHex } = resumeData;
+  const { skills, colorHex, borderStyle } = resumeData;
 
   if (!skills?.length) return null;
 
@@ -216,6 +225,12 @@ function SkillsSection({ resumeData = {} }: ResumeSectionProps) {
             <Badge
               style={{
                 backgroundColor: colorHex,
+                borderRadius:
+                  borderStyle === BorderStyles.SQUARE
+                    ? "0px"
+                    : borderStyle === BorderStyles.CIRCLE
+                    ? "9999px"
+                    : "8px",
               }}
               className="bg-black text-white rounded-md hover:bg-black"
               key={i}

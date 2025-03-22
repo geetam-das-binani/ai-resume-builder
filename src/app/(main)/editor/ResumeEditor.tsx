@@ -8,13 +8,15 @@ import BreadCrumbs from "./BreadCrumbs";
 import Footer from "./Footer";
 import { ResumeValues } from "@/lib/validation";
 import ResumePreviewSection from "./ResumePreviewSection";
+import { cn } from "@/lib/utils";
 
 const ResumeEditor = () => {
   const searchParams = useSearchParams();
   const currentStep = searchParams.get("step") || steps[0].key;
 
   const [resumeData, setResumeData] = useState<ResumeValues>();
-  console.log(resumeData);
+  const [showSmResumePreview, setShowSmResumePreview] = useState(false);
+
   function setStep(key: string) {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("step", key);
@@ -34,7 +36,12 @@ const ResumeEditor = () => {
       </header>
       <main className="relative grow">
         <div className="absolute bottom-0 top-0 flex w-full">
-          <div className="w-full md:w-1/2 p-3 overflow-y-auto space-y-6">
+          <div
+            className={cn(
+              "w-full md:w-1/2 p-3 overflow-y-auto space-y-6 md:block",
+              showSmResumePreview && "hidden"
+            )}
+          >
             <BreadCrumbs currentStep={currentStep} setCurrentStep={setStep} />
             {FormComponent && (
               <FormComponent
@@ -47,10 +54,16 @@ const ResumeEditor = () => {
           <ResumePreviewSection
             resumeData={resumeData as ResumeValues}
             setResumeData={setResumeData}
+            className={cn(showSmResumePreview ? "flex" : "hidden")}
           />
         </div>
       </main>
-      <Footer currentStep={currentStep} setCurrentStep={setStep} />
+      <Footer
+        setSmResumePreview={setShowSmResumePreview}
+        showSmResumePreview={showSmResumePreview}
+        currentStep={currentStep}
+        setCurrentStep={setStep}
+      />
     </div>
   );
 };

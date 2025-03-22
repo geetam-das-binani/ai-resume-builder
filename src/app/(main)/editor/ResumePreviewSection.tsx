@@ -3,15 +3,21 @@ import { EditorFormProps } from "@/lib/types";
 import React from "react";
 import ColorPicker from "./ColorPicker";
 import BorderStyleButton from "./BorderStyleButton";
+import { cn } from "@/lib/utils";
 
-interface ResumePreviewSectionProps extends EditorFormProps {}
+interface ResumePreviewSectionProps extends EditorFormProps {
+  className?: string;
+}
 const ResumePreviewSection = ({
   resumeData,
   setResumeData,
+  className,
 }: ResumePreviewSectionProps) => {
   return (
-    <div className="hidden w-1/2 md:flex relative group">
-      <div className="absolute group-hover:opacity-100 opacity-50 xl:opacity-100 top-1 left-1 flex flex-col gap-3 flex-none lg:left-3 lg:top-3">
+    <div
+      className={cn("hidden md:w-1/2 md:flex relative group w-full", className)}
+    >
+      <div className="absolute transition-opacity group-hover:opacity-100 opacity-50 xl:opacity-100 top-1 left-1 flex flex-col gap-3 flex-none lg:left-3 lg:top-3">
         <ColorPicker
           color={resumeData?.colorHex}
           onChange={(color) =>
