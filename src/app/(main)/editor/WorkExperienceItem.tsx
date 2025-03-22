@@ -13,7 +13,11 @@ import { GripHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { cn } from "@/lib/utils";
 interface WorkExperienceItemProps {
+  id: string;
   form: UseFormReturn<WorkExperienceValues>;
   index: number;
   remove: (index: number) => void;
@@ -22,12 +26,32 @@ const WorkExperienceItem = ({
   form,
   index,
   remove,
+  id,
 }: WorkExperienceItemProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
   return (
-    <div className="space-y-3 border rouded-md bg-background p-3">
+    <div
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+      }}
+      ref={setNodeRef}
+      className={cn("space-y-3 border rouded-md bg-background p-3",isDragging && "shadow-xl z-50 cursor-grab relative")}
+    >
       <div className="flex justify-between gap-2">
         <span className="font-semibold">Work Experience {index + 1}</span>
-        <GripHorizontal className="size-5 cursor-grab text-muted-foreground" />
+        <GripHorizontal
+          {...attributes}
+          {...listeners}
+          className="size-5 cursor-grab text-muted-foreground focus:outline-none"
+        />
       </div>
       <FormField
         control={form.control}

@@ -2,12 +2,26 @@ import { Button } from "@/components/ui/button";
 import { EditorFormProps } from "@/lib/types";
 import { workExperienceSchema, WorkExperienceValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import React, { useEffect } from "react";
-import {  useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import WorkExperienceItem from "../WorkExperienceItem";
 import { Form } from "@/components/ui/form";
-
+import {
+  closestCorners,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 const WorkExperienceForm = ({ resumeData, setResumeData }: EditorFormProps) => {
   const form = useForm<WorkExperienceValues>({
     resolver: zodResolver(workExperienceSchema),
@@ -30,10 +44,26 @@ const WorkExperienceForm = ({ resumeData, setResumeData }: EditorFormProps) => {
     return () => unsubscribe();
   }, [form, resumeData, setResumeData]);
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control: form.control,
     name: "workExperiences",
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = fields.findIndex((field) => field.id === active.id);
+      const newIndex = fields.findIndex((field) => field.id === over.id);
+      move(oldIndex, newIndex);
+      return arrayMove(fields, oldIndex, newIndex);
+    }
+  }
   return (
     <div className="max-w-xl mx-auto space-y-6">
       <div className="space-y-1.5 text-center">
@@ -44,14 +74,27 @@ const WorkExperienceForm = ({ resumeData, setResumeData }: EditorFormProps) => {
       </div>
       <Form {...form}>
         <form className="space-y-3">
-          {fields?.map((field, index) => (
-            <WorkExperienceItem
-              key={field.id}
-              index={index}
-              form={form}
-              remove={remove}
-            />
-          ))}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCorners}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToVerticalAxis]}
+          >
+            <SortableContext
+            items={fields}
+            strategy={verticalListSortingStrategy}
+            >
+              {fields?.map((field, index) => (
+                <WorkExperienceItem
+                  key={field.id}
+                  index={index}
+                  form={form}
+                  remove={remove}
+                  id={field.id}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
           <div className="flex justify-center">
             <Button
               type="button"
