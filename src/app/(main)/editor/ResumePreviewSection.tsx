@@ -1,3 +1,4 @@
+"use client"
 import ResumePreview from "@/components/ResumePreview";
 import { EditorFormProps } from "@/lib/types";
 import React from "react";

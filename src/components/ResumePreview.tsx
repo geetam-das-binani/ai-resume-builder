@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useRef, useState } from "react";
 import useDimension from "@/app/hooks/useDimension";
 import { EditorFormProps } from "@/lib/types";
