@@ -1,7 +1,12 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { resumeSchema, ResumeValues } from "@/lib/validation";
+import {
+  GenerateSummaryInput,
+  generateSummarySchema,
+  resumeSchema,
+  ResumeValues,
+} from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
 import { del, put } from "@vercel/blob";
 import path from "path";
@@ -10,12 +15,10 @@ const saveResume = async (values: ResumeValues) => {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
-    
+
     const { id } = values;
-   
-    
-    const { photo, workExperiences, educations, ...resumeValues } =
-      values
+
+    const { photo, workExperiences, educations, ...resumeValues } = values;
 
     const existingResume = id
       ? await prisma.resume.findUnique({
@@ -27,7 +30,6 @@ const saveResume = async (values: ResumeValues) => {
 
     let newPhotoUrl: string | undefined | null = undefined;
 
-   
     if (typeof photo === "object" && photo !== null && "name" in photo) {
       if (existingResume?.photoUrl) {
         await del(existingResume.photoUrl);
@@ -45,13 +47,12 @@ const saveResume = async (values: ResumeValues) => {
       newPhotoUrl = null;
     }
 
-    
     if (id) {
       return await prisma.resume.update({
         where: { id, userId },
         data: {
           ...resumeValues,
-          photoUrl: newPhotoUrl,   // undefined fields are ingored in prisma updates
+          photoUrl: newPhotoUrl, // undefined fields are ingored in prisma updates
           workExperiences: {
             deleteMany: {},
             create: workExperiences?.map((exp) => ({
@@ -99,5 +100,12 @@ const saveResume = async (values: ResumeValues) => {
     throw new Error("Failed to save resume");
   }
 };
+const generateSummary = (input: GenerateSummaryInput) => {
+  try {
+    //  TODO : BLOCK FOR NON PREMUIM USERS
 
-export { saveResume };
+    const { educations, jobTitle, skills, workExperiences } =
+      generateSummarySchema.parse(input);
+  } catch (error) {}
+};
+export { saveResume, generateSummary };

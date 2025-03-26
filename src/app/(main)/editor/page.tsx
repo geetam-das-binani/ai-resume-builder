@@ -21,12 +21,10 @@ const Editor = async ({ searchParams }: PageProps) => {
           id: resumeId,
           userId,
         },
-        include:resumeDataInclude
+        include: resumeDataInclude,
       })
     : null;
-  return <ResumeEditor
-  resumeToEdit={resumeToEdit}
-  />;
+  return <ResumeEditor resumeToEdit={resumeToEdit} />;
 };
 
 export default Editor;
