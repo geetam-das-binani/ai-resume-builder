@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import useDimension from "@/app/hooks/useDimension";
 import { EditorFormProps } from "@/lib/types";
@@ -56,9 +56,14 @@ function PersonalnfoHeader({ resumeData = {} }: ResumeSectionProps) {
     colorHex,
     borderStyle,
   } = resumeData;
-  const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
+  const [photoSrc, setPhotoSrc] = useState(
+    typeof photo === "object" && photo !== null && "name" in photo ? "" : photo
+  );
   useEffect(() => {
-    const objectUrl = photo instanceof File ? URL.createObjectURL(photo) : "";
+    const objectUrl =
+      typeof photo === "object" && photo !== null && "name" in photo
+        ? URL.createObjectURL(photo)
+        : "";
     if (objectUrl) setPhotoSrc(objectUrl);
     if (photo === null) setPhotoSrc("");
     return () => URL.revokeObjectURL(objectUrl);

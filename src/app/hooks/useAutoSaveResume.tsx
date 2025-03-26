@@ -28,12 +28,12 @@ const useAutoSaveResume = (resumeData: ResumeValues) => {
         const newData = structuredClone(debouncedResumeData);
         const updatedResume = await saveResume({
           ...newData,
-          ...(lastSavedData.photo && newData.photo &&
+          ...(lastSavedData?.photo &&
+            newData?.photo &&
             JSON.stringify(lastSavedData.photo, fileReplacer) ===
-            JSON.stringify(newData.photo, fileReplacer) && {
-            photo: undefined,
-          }),
-          
+              JSON.stringify(newData.photo, fileReplacer) && {
+              photo: undefined,
+            }),
 
           id: resumeId,
         });
@@ -86,7 +86,8 @@ const useAutoSaveResume = (resumeData: ResumeValues) => {
   return {
     isSaving,
     hasUnsavedChanges:
-      JSON.stringify(lastSavedData, fileReplacer) !== JSON.stringify(resumeData, fileReplacer),
+      JSON.stringify(lastSavedData, fileReplacer) !==
+      JSON.stringify(resumeData, fileReplacer),
   };
 };
 

@@ -8,15 +8,21 @@ import BreadCrumbs from "./BreadCrumbs";
 import Footer from "./Footer";
 import { ResumeValues } from "@/lib/validation";
 import ResumePreviewSection from "./ResumePreviewSection";
-import { cn } from "@/lib/utils";
+import { cn, mapToResumeValues } from "@/lib/utils";
 import useAutoSaveResume from "@/app/hooks/useAutoSaveResume";
 import { useUnloadWarning } from "@/app/hooks/useUnloadWarning";
+import { ResumeServerData } from "@/lib/types";
 
-const ResumeEditor = () => {
+interface ResumeEditorProps {
+  resumeToEdit: ResumeServerData | null;
+}
+const ResumeEditor = ({ resumeToEdit }: ResumeEditorProps) => {
   const searchParams = useSearchParams();
   const currentStep = searchParams.get("step") || steps[0].key;
 
-  const [resumeData, setResumeData] = useState<ResumeValues>();
+  const [resumeData, setResumeData] = useState<ResumeValues>(
+    resumeToEdit ? mapToResumeValues(resumeToEdit) : {}
+  );
   const [showSmResumePreview, setShowSmResumePreview] = useState(false);
   const { hasUnsavedChanges, isSaving } = useAutoSaveResume(
     resumeData as ResumeValues

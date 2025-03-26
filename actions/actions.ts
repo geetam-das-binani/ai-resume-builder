@@ -16,7 +16,7 @@ const saveResume = async (values: ResumeValues) => {
     
     const { photo, workExperiences, educations, ...resumeValues } =
       values
-console.log(photo)
+
     const existingResume = id
       ? await prisma.resume.findUnique({
           where: { id, userId },
@@ -45,7 +45,7 @@ console.log(photo)
       newPhotoUrl = null;
     }
 
-    console.log(newPhotoUrl,'url')
+    
     if (id) {
       return await prisma.resume.update({
         where: { id, userId },
