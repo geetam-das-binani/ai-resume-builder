@@ -5,13 +5,11 @@ import prisma from "@/lib/prisma";
 import {
   GenerateSummaryInput,
   generateSummarySchema,
-  resumeSchema,
   ResumeValues,
 } from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
 import { del, put } from "@vercel/blob";
 import path from "path";
-import { text } from "stream/consumers";
 
 const saveResume = async (values: ResumeValues) => {
   try {
@@ -154,24 +152,12 @@ const generateSummary = async (input: GenerateSummaryInput) => {
       },
     });
 
-    console.log("systemMessage", systemMessage);
-    console.log("userMessage", userMessage);
     const response = (await result.text) as string;
-    if(!response) throw new Error("Failed to generate summary");
-    console.log("response", response);
-    const cleanedText = response
-      .toString()
-      .replace(/```(?:json)?\n?/g, "")
-      .trim();
+    if (!response) throw new Error("Failed to generate summary");
 
-    console.log("cleanedText", cleanedText);
-    const data = JSON.parse(cleanedText);
-    console.log(data, "data");
-    return {
-      cleanedText,
-      data,
-      response
-    }
-  } catch (error) {}
+    return response;
+  } catch (error) {
+    throw new Error("Failed to generate summary");
+  }
 };
 export { saveResume, generateSummary };

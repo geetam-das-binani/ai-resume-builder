@@ -19,12 +19,12 @@ const GenerateSummaryButton = ({
     // TODO : bLOCK FOR NON PREMUIM USERS
     try {
       setLoading(true);
-     const response=await generateSummary({
-      jobTitle:resumeData?.jobTitle
-     })
-      // if (response) {
-      //   onSummaryGenerated(response);
-      // }
+      const response = await generateSummary(resumeData);
+
+      if (response) {
+        onSummaryGenerated(response);
+        toast.success("Summary generated successfully");
+      }
     } catch (error) {
       console.log(error);
       toast.error("Failed to generate summary", {
