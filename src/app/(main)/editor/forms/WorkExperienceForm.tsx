@@ -81,8 +81,8 @@ const WorkExperienceForm = ({ resumeData, setResumeData }: EditorFormProps) => {
             modifiers={[restrictToVerticalAxis]}
           >
             <SortableContext
-            items={fields}
-            strategy={verticalListSortingStrategy}
+              items={fields}
+              strategy={verticalListSortingStrategy}
             >
               {fields?.map((field, index) => (
                 <WorkExperienceItem

@@ -14,7 +14,7 @@ interface ResumePreviewProps extends Omit<EditorFormProps, "setResumeData"> {
 }
 const ResumePreview = ({ resumeData, className }: ResumePreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { height, width } = useDimension(containerRef);
+  const { width } = useDimension(containerRef);
   return (
     <div
       ref={containerRef}
