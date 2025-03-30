@@ -49,7 +49,7 @@ const SummaryForm = ({ resumeData, setResumeData }: EditorFormProps) => {
             name="summary"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="sr-only">Profession Summary</FormLabel>
+                <FormLabel className="sr-only">Professional Summary</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}

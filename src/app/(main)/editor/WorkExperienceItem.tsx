@@ -1,4 +1,4 @@
-import { WorkExperienceValues } from "@/lib/validation";
+import { WorkExperienceSingle, WorkExperienceValues } from "@/lib/validation";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import {
@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
+import GenerateWorkExperienceButton from "./forms/GenerateWorkExperienceButton";
 interface WorkExperienceItemProps {
   id: string;
   form: UseFormReturn<WorkExperienceValues>;
@@ -43,7 +44,10 @@ const WorkExperienceItem = ({
         transition,
       }}
       ref={setNodeRef}
-      className={cn("space-y-3 border rouded-md bg-background p-3",isDragging && "shadow-xl z-50 cursor-grab relative")}
+      className={cn(
+        "space-y-3 border rouded-md bg-background p-3",
+        isDragging && "shadow-xl z-50 cursor-grab relative"
+      )}
     >
       <div className="flex justify-between gap-2">
         <span className="font-semibold">Work Experience {index + 1}</span>
@@ -51,6 +55,13 @@ const WorkExperienceItem = ({
           {...attributes}
           {...listeners}
           className="size-5 cursor-grab text-muted-foreground focus:outline-none"
+        />
+      </div>
+      <div className="flex justify-center">
+        <GenerateWorkExperienceButton
+          onWorExperienceGenerated={(workExperience: WorkExperienceSingle) => {
+            form.setValue(`workExperiences.${index}`, workExperience);
+          }}
         />
       </div>
       <FormField

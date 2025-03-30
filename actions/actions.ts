@@ -5,7 +5,10 @@ import prisma from "@/lib/prisma";
 import {
   GenerateSummaryInput,
   generateSummarySchema,
+  GenerateWorkExperienceInput,
+  generateWorkExperienceSchema,
   ResumeValues,
+  WorkExperienceSingle,
 } from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
 import { del, put } from "@vercel/blob";
@@ -160,4 +163,73 @@ const generateSummary = async (input: GenerateSummaryInput) => {
     throw new Error("Failed to generate summary");
   }
 };
-export { saveResume, generateSummary };
+
+const generateWorkExperience = async (input: GenerateWorkExperienceInput) => {
+  try {
+    //  TODO : BLOCK FOR NON PREMIUM USERS
+    const { description } = generateWorkExperienceSchema.parse(input);
+    const systemMessage = `
+    You are a job resume generator AI. Your task is to generate a single work experience entry based on the user input.
+    Your response must adhere to the following structure. You can omit fields if they can't be inferred from the provided data, but don't add any new ones.
+  
+    {
+      "Job title": "<job title>",
+      "Company": "<company name>",
+      "Start date": "<format: YYYY-MM-DD> (only if provided)",
+      "End date": "<format: YYYY-MM-DD> (only if provided)",
+      "Description": "<an optimized description in bullet format>"
+    }
+    `;
+
+    const userMessage = `
+    Please provide a work experience entry from this description:
+    ${description}
+    `;
+
+    const result = await ai.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: userMessage,
+      config: {
+        systemInstruction: systemMessage,
+      },
+    });
+
+    // Ensure we extract the text correctly
+    const responseText = (await result.text) as string;
+   
+
+    // Ensure JSON parsing works
+    let cleanedText = responseText.trim();
+    if (cleanedText.startsWith("```json")) {
+      cleanedText = cleanedText
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+    }
+
+    
+
+    // Parse JSON safely
+    let data;
+    try {
+      data = JSON.parse(cleanedText);
+    } catch (jsonError) {
+      console.error("JSON Parsing Error:", jsonError);
+      throw new Error("AI response was not in the expected JSON format.");
+    }
+
+    
+    return {
+      position: data["Job title"] || "",
+      company: data["Company"] || "",
+      startDate: data["Start date"] || "",
+      endDate: data["End date"] || "",
+      description: data["Description"] || "",
+    } satisfies WorkExperienceSingle;
+  } catch (error) {
+    console.error("Error:", error);
+    throw new Error("Failed to generate work experience information");
+  }
+};
+
+export { saveResume, generateSummary, generateWorkExperience };
