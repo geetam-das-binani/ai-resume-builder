@@ -15,6 +15,7 @@ const ResumeItem = ({ resume }: ResumeItemProps) => {
     resume.updatedAt > resume.createdAt;
   return (
     <div className="group border rounded-lg border-transparent hover:border-border transition-colors bg-secondary p-3">
+        
       <div className="space-y-3">
         <Link
           className="inline-block w-full text-center"

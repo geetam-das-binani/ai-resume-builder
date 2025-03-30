@@ -12,6 +12,7 @@ import {
 } from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
 import { del, put } from "@vercel/blob";
+import { revalidatePath } from "next/cache";
 import path from "path";
 
 const saveResume = async (values: ResumeValues) => {
@@ -196,7 +197,6 @@ const generateWorkExperience = async (input: GenerateWorkExperienceInput) => {
 
     // Ensure we extract the text correctly
     const responseText = (await result.text) as string;
-   
 
     // Ensure JSON parsing works
     let cleanedText = responseText.trim();
@@ -207,8 +207,6 @@ const generateWorkExperience = async (input: GenerateWorkExperienceInput) => {
         .trim();
     }
 
-    
-
     // Parse JSON safely
     let data;
     try {
@@ -218,7 +216,6 @@ const generateWorkExperience = async (input: GenerateWorkExperienceInput) => {
       throw new Error("AI response was not in the expected JSON format.");
     }
 
-    
     return {
       position: data["Job title"] || "",
       company: data["Company"] || "",
@@ -232,4 +229,30 @@ const generateWorkExperience = async (input: GenerateWorkExperienceInput) => {
   }
 };
 
-export { saveResume, generateSummary, generateWorkExperience };
+const deleteResume = async (id: string) => {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  try {
+    const resume = await prisma.resume.findUnique({
+      where: {
+        id,
+        userId,
+      },
+    });
+    if (!resume) throw new Error("Resume not found");
+    if (resume.photoUrl) {
+      await del(resume.photoUrl);
+    }
+    await prisma.resume.delete({
+      where: {
+        id,
+        userId,
+      },
+    });
+    revalidatePath("/resumes");
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to delete resume");
+  }
+};
+export { saveResume, generateSummary, generateWorkExperience, deleteResume };
