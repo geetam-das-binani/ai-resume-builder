@@ -1,11 +1,8 @@
-import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import { resumeDataInclude } from "@/lib/types";
 import { auth } from "@clerk/nextjs/server";
-import { PlusSquare } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
-import React from "react";
+import CreateResumeButton from "./CreateResumeButton";
 import ResumeItem from "./ResumeItem";
 export const metadata: Metadata = {
   title: "Your Resumes",
@@ -24,12 +21,9 @@ const Resumes = async () => {
   // TODO : check quota for non premuim users
   return (
     <main className="max-w-7xl mx-auto px-3 py-6 w-full space-y-6">
-      <Button asChild className=" mx-auto flex w-fit gap-2">
-        <Link href={"/editor"}>
-          <PlusSquare className="size-5 " />
-          New Resume
-        </Link>
-      </Button>
+      <CreateResumeButton
+      canCreate={totalCount < 0}
+      /> 
       <div className="space-y-1">
         <h1 className="text-3xl font-bold">Your Resumes</h1>
         <p>Total : {totalCount || 0}</p>

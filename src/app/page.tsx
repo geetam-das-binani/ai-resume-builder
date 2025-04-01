@@ -15,14 +15,14 @@ export default function Home() {
           className="mx-auto md:mx-0"
         />
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl scroll-m-20">
-          Create a{" "}
+          Create the{" "}
           <span className="bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent inline-block">
             Perfect Resume
           </span>{" "}
           in Minutes
         </h1>
         <p className="text-lg text-gray-500">
-          ResumeGenie is an{" "}
+          Resume Builder is an{" "}
           <span className="font-bold">AI-powered resume builder</span> that
           helps you create a professional resume in minutes.
         </p>
