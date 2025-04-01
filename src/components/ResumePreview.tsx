@@ -11,8 +11,13 @@ import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 
 interface ResumePreviewProps extends Omit<EditorFormProps, "setResumeData"> {
   className?: string;
+  contentRef?: React.Ref<HTMLDivElement>;
 }
-const ResumePreview = ({ resumeData, className }: ResumePreviewProps) => {
+const ResumePreview = ({
+  resumeData,
+  className,
+  contentRef,
+}: ResumePreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimension(containerRef);
   return (
@@ -26,6 +31,8 @@ const ResumePreview = ({ resumeData, className }: ResumePreviewProps) => {
       <div
         className={`${cn("space-y-6 p-6", !width && "hidden")}`}
         style={{ zoom: (1 / 794) * width }}
+        ref={contentRef}
+        id="resumePreviewContent"
       >
         <PersonalnfoHeader resumeData={resumeData} />
         <SummarySection resumeData={resumeData} />
