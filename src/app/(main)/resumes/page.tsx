@@ -36,9 +36,9 @@ const Resumes = async () => {
       </div>
       <div className="flex flex-col sm:grid grid-cols-2 md:grid-cols-3 gap-3 lg:grid-cols-4 w-full">
         {resumes?.length &&
-          resumes.map((resume) => <ResumeItem
-          resume={resume}
-          key={resume.id} />)}
+          resumes.map((resume) => (
+            <ResumeItem resume={resume} key={resume.id} />
+          ))}
       </div>
     </main>
   );
