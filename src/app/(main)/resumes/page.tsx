@@ -22,7 +22,7 @@ const Resumes = async () => {
   return (
     <main className="max-w-7xl mx-auto px-3 py-6 w-full space-y-6">
       <CreateResumeButton
-      canCreate={totalCount < 0}
+      canCreate={totalCount < 3}
       /> 
       <div className="space-y-1">
         <h1 className="text-3xl font-bold">Your Resumes</h1>
