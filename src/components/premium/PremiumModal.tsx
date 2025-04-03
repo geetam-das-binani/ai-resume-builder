@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import usePremiumModal from "@/app/hooks/usePremiumModal";
 import { toast } from "sonner";
 import { createCheckoutSession } from "./action";
+import { env } from "@/env";
 
 const premiumFeatures = ["AI tools", "Up to 3 resumes"];
 const premiumPlusFeatures = [
@@ -55,7 +56,7 @@ const PremiumModal = () => {
               <Button
                 onClick={() =>
                   handlePremiumClick(
-                    process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY!
+                    env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY
                   )
                 }
                 disabled={loading}
@@ -80,7 +81,7 @@ const PremiumModal = () => {
               <Button
                 onClick={() =>
                   handlePremiumClick(
-                    process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY!
+                  env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY
                   )
                 }
                 variant={"premium"}

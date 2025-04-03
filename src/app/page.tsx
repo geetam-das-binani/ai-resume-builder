@@ -3,9 +3,11 @@ import logo from "@/assets/logo.png";
 import resumePreview from "@/assets/resumePreview.png";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="flex flex-col min-h-screen items-center justify-center gap-6 bg-gray-100 px-5 py-12 text-gray-900 text-center md:text-start md:flex-row lg:gap-12">
+     
       <div className="max-w-prose space-y-3">
         <Image
           src={logo}
