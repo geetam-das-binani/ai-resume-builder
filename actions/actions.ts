@@ -1,7 +1,9 @@
 "use server";
 
 import { ai } from "@/lib/geminiai";
+import { canCreateResume, canUseDesignCustomizations } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
+import { getUserSubscriptionLevel } from "@/lib/subscriptions";
 import {
   GenerateSummaryInput,
   generateSummarySchema,
@@ -21,6 +23,14 @@ const saveResume = async (values: ResumeValues) => {
     if (!userId) throw new Error("Unauthorized");
 
     const { id } = values;
+    const subscriptionLevel = await getUserSubscriptionLevel(userId);
+
+    if (!id) {
+      const resumeCount = await prisma.resume.count({ where: { userId } });
+      if (!canCreateResume(subscriptionLevel, resumeCount)) {
+        throw new Error("Resume limit reached for current subscription");
+      }
+    }
 
     const { photo, workExperiences, educations, ...resumeValues } = values;
 
@@ -31,6 +41,18 @@ const saveResume = async (values: ResumeValues) => {
       : null;
 
     if (id && !existingResume) throw new Error("Resume not found");
+
+    const hasCustomizations =
+      existingResume?.borderStyle !== values.borderStyle ||
+      existingResume?.colorHex !== values.colorHex;
+
+    if (hasCustomizations) {
+      if (!canUseDesignCustomizations(subscriptionLevel)) {
+        throw new Error(
+          "You need to upgrade your subscription to use customizations"
+        );
+      }
+    }
 
     let newPhotoUrl: string | undefined | null = undefined;
 

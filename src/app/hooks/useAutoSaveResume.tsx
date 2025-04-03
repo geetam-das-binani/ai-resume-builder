@@ -51,8 +51,8 @@ const useAutoSaveResume = (resumeData: ResumeValues) => {
         }
       } catch (error: any) {
         setIsError(true);
-        console.error("Save failed: ", error.message);
-        toast.error("Failed to save resume", {
+        console.log("Save failed: ", error.message);
+        toast.error(error.message || "Failed to save resume", {
           duration: 10000,
           description: (
             <div className="space-y-3">

@@ -35,7 +35,7 @@ model Resume {
   updatedAt       DateTime         @updatedAt
   workExperiences WorkExperience[]
   educations      Education[]
-  skills         String[]
+  skills          String[]
 
   @@map("resumes")
 }
@@ -63,9 +63,22 @@ model Education {
   endDate   DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  resume    Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resume    Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
   resumeId  String
 
   @@map("educations")
 }
 
+model UserSubscription {
+  id                      String   @id @default(cuid())
+  userId                  String   @unique
+  stripeCustomerId        String   @unique
+  stripeSubscriptionId    String   @unique
+  stripePriceId           String
+  stripeCurrentPeriodEnd  DateTime
+  stripeCancelAtPeriodEnd Boolean  @default(false)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@map("user_subscriptions")
+}

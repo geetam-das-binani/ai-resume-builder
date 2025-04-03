@@ -4,26 +4,29 @@ import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import CreateResumeButton from "./CreateResumeButton";
 import ResumeItem from "./ResumeItem";
+import { canCreateResume } from "@/lib/permissions";
+import { getUserSubscriptionLevel } from "@/lib/subscriptions";
 export const metadata: Metadata = {
   title: "Your Resumes",
 };
 const Resumes = async () => {
   const { userId } = await auth();
   if (!userId) return null;
-  const [resumes, totalCount] = await Promise.all([
+  const [resumes, totalCount, subscriptionLevel] = await Promise.all([
     prisma.resume.findMany({
       where: { userId },
       orderBy: { updatedAt: "desc" },
       include: resumeDataInclude,
     }),
     prisma.resume.count({ where: { userId } }),
+    getUserSubscriptionLevel(userId),
   ]);
-  // TODO : check quota for non premuim users
+ 
   return (
     <main className="max-w-7xl mx-auto px-3 py-6 w-full space-y-6">
       <CreateResumeButton
-      canCreate={totalCount < 3}
-      /> 
+        canCreate={canCreateResume(subscriptionLevel, totalCount)}
+      />
       <div className="space-y-1">
         <h1 className="text-3xl font-bold">Your Resumes</h1>
         <p>Total : {totalCount || 0}</p>
