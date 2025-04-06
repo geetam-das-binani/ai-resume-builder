@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { canUseDesignCustomizations } from "@/lib/permissions";
 import { Circle, Square, Squircle } from "lucide-react";
 import React from "react";
+import { useSubscriptionLevel } from "../resumes/SubscriptionLevelProvider";
+import usePremiumModal from "@/app/hooks/usePremiumModal";
 
 interface BorderStyleButtonProps {
   borderStyle: string | undefined;
@@ -17,7 +20,13 @@ const BorderStyleButton = ({
   borderStyle,
   onChange,
 }: BorderStyleButtonProps) => {
+  const subscriptionLevel = useSubscriptionLevel();
+  const { setOpen } = usePremiumModal();
   function handleClick() {
+    if (!canUseDesignCustomizations(subscriptionLevel)) {
+      setOpen(true);
+      return;
+    }
     const currentIndex = borderStyle ? borderStyles.indexOf(borderStyle) : 0;
     const nextIndex = (currentIndex + 1) % borderStyles.length;
     onChange(borderStyles[nextIndex]);
@@ -37,7 +46,7 @@ const BorderStyleButton = ({
       variant={"outline"}
       title="Change Border Style"
     >
-        <Icon className="size-5"/>
+      <Icon className="size-5" />
     </Button>
   );
 };

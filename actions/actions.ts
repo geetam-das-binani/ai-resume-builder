@@ -1,7 +1,11 @@
 "use server";
 
 import { ai } from "@/lib/geminiai";
-import { canCreateResume, canUseDesignCustomizations } from "@/lib/permissions";
+import {
+  canCreateResume,
+  canUseAITools,
+  canUseDesignCustomizations,
+} from "@/lib/permissions";
 import prisma from "@/lib/prisma";
 import { getUserSubscriptionLevel } from "@/lib/subscriptions";
 import {
@@ -43,8 +47,9 @@ const saveResume = async (values: ResumeValues) => {
     if (id && !existingResume) throw new Error("Resume not found");
 
     const hasCustomizations =
-      existingResume?.borderStyle !== values.borderStyle ||
-      existingResume?.colorHex !== values.colorHex;
+      (values.borderStyle &&
+        existingResume?.borderStyle !== values.borderStyle) ||
+      (values.colorHex && existingResume?.colorHex !== values.colorHex);
 
     if (hasCustomizations) {
       if (!canUseDesignCustomizations(subscriptionLevel)) {
@@ -128,7 +133,13 @@ const saveResume = async (values: ResumeValues) => {
 };
 const generateSummary = async (input: GenerateSummaryInput) => {
   try {
-    //  TODO : BLOCK FOR NON PREMUIM USERS
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const subscriptionLevel = await getUserSubscriptionLevel(userId);
+    if (!canUseAITools(subscriptionLevel)) {
+      throw new Error("You need to upgrade your subscription to use AI tools");
+    }
 
     const { educations, jobTitle, skills, workExperiences } =
       generateSummarySchema.parse(input);
@@ -189,7 +200,14 @@ const generateSummary = async (input: GenerateSummaryInput) => {
 
 const generateWorkExperience = async (input: GenerateWorkExperienceInput) => {
   try {
-    //  TODO : BLOCK FOR NON PREMIUM USERS
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const subscriptionLevel = await getUserSubscriptionLevel(userId);
+    if (!canUseAITools(subscriptionLevel)) {
+      throw new Error("You need to upgrade your subscription to use AI tools");
+    }
+
     const { description } = generateWorkExperienceSchema.parse(input);
     const systemMessage = `
     You are a job resume generator AI. Your task is to generate a single work experience entry based on the user input.
