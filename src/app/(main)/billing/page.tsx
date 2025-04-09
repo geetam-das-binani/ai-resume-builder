@@ -4,7 +4,8 @@ import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import Stripe from "stripe";
 import GetSubscriptionButton from "./GetSubscriptionButton";
-
+import ManageSubscriptionsButton from "./ManageSubscriptionsButton";
+import { formatDate } from "date-fns";
 export const metadata: Metadata = {
   title: "Billing",
 };
@@ -32,7 +33,19 @@ const Billing = async () => {
       <span className="font-bold">
         {priceInfo ? (priceInfo.product as Stripe.Product).name : "Free"}
       </span>
-      <GetSubscriptionButton/>
+      {subscription ? (
+        <>
+          {subscription.stripeCancelAtPeriodEnd && (
+            <p className="text-destructive">
+              You Subscription will be cancelled on{" "}
+              {formatDate(subscription.stripeCurrentPeriodEnd, "MMMM dd, yyyy")}
+            </p>
+          )}
+          <ManageSubscriptionsButton />
+        </>
+      ) : (
+        <GetSubscriptionButton />
+      )}
     </main>
   );
 };

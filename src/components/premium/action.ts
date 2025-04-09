@@ -43,5 +43,28 @@ const createCheckoutSession = async (priceId: string) => {
     return session.url;
   } catch (error) {}
 };
+const createCreatePortalSession = async () => {
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-export { createCheckoutSession };
+    const stripeCustomerId = user.privateMetadata.stripeCustomerId as
+      | string
+      | undefined;
+
+    if (!stripeCustomerId) throw new Error("No stripe customer id found");
+
+    const session = await stripe.billingPortal.sessions.create({
+      customer: stripeCustomerId,
+      return_url: `${env.NEXT_PUBLIC_BASE_URL}/billing`,
+    });
+
+    if (!session?.url) throw new Error("Failed to create portal session");
+
+    return session.url;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to create portal session");
+  }
+};
+export { createCheckoutSession, createCreatePortalSession };
