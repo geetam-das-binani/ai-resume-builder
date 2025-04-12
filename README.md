@@ -2,7 +2,6 @@
 
 AI Resume Builder is a modern, feature-rich application that helps users create professional resumes with the assistance of AI. Built with Next.js, TypeScript, and integrated with Google's Gemini AI, this application streamlines the resume creation process and helps users land their dream jobs.
 
-![AI Resume Builder](src/assets/resumePreview.png)
 
 ## Features
 
